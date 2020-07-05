@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Quality Assurance & Quality Check',
+    'name': 'Shipping',
     'version': '1.0',
     'author': 'Technoindo.com',
-    'category': 'Sales Management',
+    'category': 'Shipping Management',
     'depends': [
         'sale_contract',
     ],
     'data': [
         'views/menu.xml',
-        'views/qaqc_coa.xml',
+        'views/shipping.xml',
+        'views/barge.xml',
+        'security/shipping_security.xml',
+        'security/ir.model.access.csv',
+
     ],
     'qweb': [
         # 'static/src/xml/cashback_templates.xml',

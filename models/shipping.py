@@ -5,6 +5,7 @@ import time
 
 class Shipping(models.Model):
 	_name = "shipping.shipping"
+	_order = "id desc"
 
 	name = fields.Char(string="Name", size=100 , store=True,index=True,copy=False, required=True, readonly=True, states={'draft': [('readonly', False)]})
 	barge_id = fields.Many2one('shipping.barge', string='Barge', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always')

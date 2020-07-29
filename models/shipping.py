@@ -22,6 +22,7 @@ class Shipping(models.Model):
 		('approve', 'Approved'),
 		('done', 'Done')
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+        
 
 	@api.onchange("barge_id", "sale_contract_id" )
 	def _set_name(self):
@@ -65,7 +66,13 @@ class Shipping(models.Model):
 		if not self.env.user.has_group('shipping.shipping_group_manager') :
 			raise UserError(_("You are not manager") )
 		self.state = 'done'
-
+	
+	@api.model
+	def create(self, values):
+		seq = self.env['ir.sequence'].next_by_code('shipping')
+		values["name"] = values["name"] + " /" +seq
+		res = super(Shipping, self ).create(values)
+		return res
 
 	_constraints = [ 
         (_check_quantity, 'Out of Capacity', ['quantity','barge_id'] ) ,

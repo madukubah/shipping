@@ -14,7 +14,7 @@
         'views/barge.xml',
         'security/shipping_security.xml',
         'security/ir.model.access.csv',
-
+        "data/shipping_data.xml",
     ],
     'qweb': [
         # 'static/src/xml/cashback_templates.xml',

@@ -11,5 +11,10 @@
             <field name="number_increment">1</field>
         </record>
 
+        <record id="dp_shipping" model="decimal.precision">
+            <field name="name">Shipping</field>
+            <field name="digits">3</field>
+        </record>
+
     </data>
 </odoo>

@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import time
+import odoo.addons.decimal_precision as dp
 
 class Shipping(models.Model):
 	_name = "shipping.shipping"
@@ -13,7 +14,7 @@ class Shipping(models.Model):
 
 	depart_date = fields.Date('Depart Date', help='',  default=time.strftime("%Y-%m-%d") )
 	arrive_date = fields.Date('Arrived Date', help='',  default=time.strftime("%Y-%m-%d") )
-	quantity = fields.Float( string="Quantity (WMT)", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=0 )
+	quantity = fields.Float( string="Quantity (WMT)", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
 
 	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
 	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )

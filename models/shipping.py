@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import time
+import datetime
 import odoo.addons.decimal_precision as dp
 
 class Shipping(models.Model):
@@ -10,11 +11,20 @@ class Shipping(models.Model):
 
 	name = fields.Char(string="Name", size=100 , store=True,index=True,copy=False, required=True, readonly=True, states={'draft': [('readonly', False)]})
 	barge_id = fields.Many2one('shipping.barge', string='Barge', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always')
-	sale_contract_id = fields.Many2one('sale.contract', string='Contract', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always')
+	sale_contract_id = fields.Many2one('sale.contract', string='Contract', domain=[ ('state','=',"open") ], readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always', ondelete="restrict" )
 
-	depart_date = fields.Date('Depart Date', help='',  default=time.strftime("%Y-%m-%d") )
-	arrive_date = fields.Date('Arrived Date', help='',  default=time.strftime("%Y-%m-%d") )
+	depart_date = fields.Datetime('Depart Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+	arrive_date = fields.Datetime('Arrived Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+
+	start_barging_date = fields.Datetime('Start Barging Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+	end_barging_date = fields.Datetime('End Barging Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+
+	clearence_out_date = fields.Datetime('Clearence Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+
 	quantity = fields.Float( string="Quantity (WMT)", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
+	ritase_count = fields.Float( string="Ritase Count", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
+
+	ton_p_rit = fields.Float( string="Ton/Rit", readonly=True, default=0, digits=dp.get_precision('Shipping'), compute="_set_ton_p_rit" )
 
 	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
 	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
@@ -25,6 +35,12 @@ class Shipping(models.Model):
 		('done', 'Done')
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
         
+	@api.depends("quantity", "ritase_count" )
+	def _set_ton_p_rit(self):
+		for rec in self:
+			rec.ritase_count = rec.ritase_count if rec.ritase_count else 1.0
+			rec.ton_p_rit = rec.quantity /rec.ritase_count
+
 
 	@api.onchange("barge_id", "sale_contract_id" )
 	def _set_name(self):
@@ -77,7 +93,7 @@ class Shipping(models.Model):
 		return res
 
 	_constraints = [ 
-        (_check_quantity, 'Out of Capacity', ['quantity','barge_id'] ) ,
+        # (_check_quantity, 'Out of Capacity', ['quantity','barge_id'] ) ,
         (_check_port, 'Loading Port and Discharging Port Must Different', ['loading_port','discharging_port'] ) ,
         ]
 		

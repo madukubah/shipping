@@ -40,15 +40,20 @@
                             <field name="barge_id" />
                             <field name="sale_contract_id" />
                             <field name="quantity" />
+                            <field name="ritase_count" />
+                            <field name="ton_p_rit" />
                         </group>
                         
                         <group class="oe_title">
                             <label for="depart_date" string="Date" ></label>
                             <group>
                                 <field name="depart_date" />
+                                <field name="start_barging_date" />
+                                <field name="clearence_out_date" />
                             </group>
                             <group>
                                 <field name="arrive_date" />
+                                <field name="end_barging_date" />
                             </group>
                         </group>
 

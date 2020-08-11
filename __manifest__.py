@@ -7,11 +7,13 @@
     'category': 'Shipping Management',
     'depends': [
         'sale_contract',
+        # "decimal_precision"
     ],
     'data': [
         'views/menu.xml',
         'views/shipping.xml',
         'views/barge.xml',
+        "views/port.xml",
         'security/shipping_security.xml',
         'security/ir.model.access.csv',
         "data/shipping_data.xml",

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="shipping_port_list" model="ir.ui.view">
+        <field name="name">shipping_port_list</field>
+        <field name="model">shipping.port</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <tree string="Barge List">
+                <field name="name" />
+                <field name="partner_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shipping_port_form" model="ir.ui.view">
+            <field name="name">shipping.port.form</field>
+            <field name="model">shipping.port</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Barge">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Port Name" ></label>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="partner_id" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+</odoo>

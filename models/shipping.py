@@ -3,7 +3,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import time
 import datetime
-import odoo.addons.decimal_precision as dp
+from odoo.addons import decimal_precision as dp
 
 class Shipping(models.Model):
 	_name = "shipping.shipping"
@@ -21,13 +21,19 @@ class Shipping(models.Model):
 
 	clearence_out_date = fields.Datetime('Clearence Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
 
-	quantity = fields.Float( string="Quantity (WMT)", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
-	ritase_count = fields.Float( string="Ritase Count", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
-
+	quantity = fields.Float( string="Quantity (WMT)", readonly=True , default=0, digits=dp.get_precision('Shipping'), compute="_compute_barging_line" )
+	ritase_count = fields.Float( string="Ritase Count", readonly=True, states={'draft': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
 	ton_p_rit = fields.Float( string="Ton/Rit", readonly=True, default=0, digits=dp.get_precision('Shipping'), compute="_set_ton_p_rit" )
+	progress = fields.Float( string="Progress", readonly=True, default=0, compute="_set_progress" )
 
 	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
 	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
+
+	barging_lines = fields.One2many(
+        'shipping.barging.line',
+        'shipping_id',
+        string='Barging Lines',
+        copy=True )
 
 	state = fields.Selection([
         ('draft', 'Draft'), 
@@ -40,7 +46,17 @@ class Shipping(models.Model):
 		for rec in self:
 			rec.ritase_count = rec.ritase_count if rec.ritase_count else 1.0
 			rec.ton_p_rit = rec.quantity /rec.ritase_count
+	   
+	@api.depends("quantity")
+	def _set_progress(self):
+		for rec in self:
+			capacity = rec.barge_id.capacity if rec.barge_id.capacity else 1.0
+			rec.progress = rec.quantity /capacity * 100
 
+	@api.depends("barging_lines")
+	def _compute_barging_line(self):
+		for rec in self:
+			rec.quantity = sum([ barging_line.quantity for barging_line in rec.barging_lines ])
 
 	@api.onchange("barge_id", "sale_contract_id" )
 	def _set_name(self):
@@ -97,3 +113,10 @@ class Shipping(models.Model):
         (_check_port, 'Loading Port and Discharging Port Must Different', ['loading_port','discharging_port'] ) ,
         ]
 		
+class BargingLine(models.Model):
+	_name = "shipping.barging.line"
+	_order = "id asc"
+
+	shipping_id = fields.Many2one("shipping.shipping", string="Shipping", ondelete="cascade" )
+	barging_date = fields.Datetime('Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
+	quantity = fields.Float( string="Quantity (WMT)", default=0, digits=dp.get_precision('Shipping') )

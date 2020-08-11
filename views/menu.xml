@@ -23,7 +23,7 @@
         <field name="view_mode">tree,form</field>
     </record>
     
-    <menuitem id="shipping_top" name="Shipping" sequence="10" web_icon="shipping,static/description/icon.png" />
+    <menuitem id="shipping_top" name="Shipping" sequence="4" web_icon="shipping,static/description/icon.png" />
         
         <menuitem name="Shipping"
                 id="shipping_shipping"

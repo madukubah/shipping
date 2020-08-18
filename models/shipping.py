@@ -11,7 +11,7 @@ class Shipping(models.Model):
 
 	name = fields.Char(string="Name", size=100 , store=True,index=True,copy=False, required=True, readonly=True, states={'draft': [('readonly', False)]})
 	barge_id = fields.Many2one('shipping.barge', string='Barge', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always')
-	sale_contract_id = fields.Many2one('sale.contract', string='Contract', domain=[ ('state','=',"open") ], readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always', ondelete="restrict" )
+	sale_contract_id = fields.Many2one('sale.contract', string='Contract', domain=[ '&', ('state','=',"open"), ('is_expired','=',"False") ], readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, index=True, track_visibility='always', ondelete="restrict" )
 
 	depart_date = fields.Datetime('Depart Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
 	arrive_date = fields.Datetime('Arrived Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )

@@ -4,7 +4,7 @@
 
     <record model="ir.actions.act_window" id="action_shipping">
         <field name="name">Shipping</field>
-        <field name="res_model">shipping.shipping</field>
+        <field name="res_model">shipping.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -32,12 +32,12 @@
                 sequence= "1"
                 />
 
-        <menuitem name="Barge"
+        <!-- <menuitem name="Barge"
                 id="shipping_barge"
                 parent="shipping_top" 
                 action="action_barge"
                 sequence= "2"
-                />
+                /> -->
         
         <menuitem id="shipping_configuration" name="Configuration" sequence="99" 
                 parent="shipping_top"/>

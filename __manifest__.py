@@ -7,7 +7,8 @@
     'category': 'Shipping Management',
     'depends': [
         'sale_contract',
-        # "decimal_precision"
+        "mining_qaqc",
+        "stock"
     ],
     'data': [
         'views/menu.xml',

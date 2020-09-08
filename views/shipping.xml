@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="shipping_shipping_list" model="ir.ui.view">
-        <field name="name">shipping_shipping_list</field>
-        <field name="model">shipping.shipping</field>
+    <record id="shipping_order_list" model="ir.ui.view">
+        <field name="name">shipping_order_list</field>
+        <field name="model">shipping.order</field>
         <field name="type">tree</field>
         <field name="priority" eval="8"/>
         <field name="arch" type="xml">
             <tree string="Shipping List">
                 <field name="name" />
-                <field name="barge_id" />
+                <!-- <field name="location_id" /> -->
                 <field name="depart_date" />
                 <field name="discharging_port" />
                 <!-- <field name="quantity" /> -->
-                <field name="progress" widget="progressbar" />
+                <!-- <field name="progress" widget="progressbar" /> -->
                 <field name="state" />
             </tree>
         </field>
     </record>
 
-    <record id="view_shipping_shipping_form" model="ir.ui.view">
-            <field name="name">shipping.shipping.form</field>
-            <field name="model">shipping.shipping</field>
+    <record id="view_shipping_order_form" model="ir.ui.view">
+            <field name="name">shipping.order.form</field>
+            <field name="model">shipping.order</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="Shipping">
@@ -39,12 +39,13 @@
                             </h1>
                         </div>
                         <group>
-                            <field name="barge_id" />
+                            <field name="coa_id" />
+                            <field name="location_id" />
                             <field name="sale_contract_id" />
                             <field name="quantity" />
-                            <field name="ritase_count" />
-                            <field name="ton_p_rit" />
-                            <field name="progress" widget="progressbar" />
+                            <!-- <field name="ritase_count" /> -->
+                            <!-- <field name="ton_p_rit" /> -->
+                            <!-- <field name="progress" widget="progressbar" /> -->
                         </group>
                         
                         <group class="oe_title">
@@ -70,7 +71,7 @@
                             </group>
                         </group>
 
-                        <notebook>
+                        <!-- <notebook>
                             <page string="Barging Lines"  >
                                 <field name="barging_lines" >
                                     <tree string="Shippings" editable="bottom">
@@ -79,7 +80,7 @@
 									</tree>
                                 </field >
                             </page>
-                        </notebook>
+                        </notebook> -->
                     </sheet>
                 </form>
             </field>

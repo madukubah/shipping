@@ -4,6 +4,8 @@ from odoo.exceptions import UserError, ValidationError
 import time
 import datetime
 from odoo.addons import decimal_precision as dp
+import logging
+_logger = logging.getLogger(__name__)
 
 class Shipping(models.Model):
 	_name = "shipping.order"
@@ -22,7 +24,7 @@ class Shipping(models.Model):
         required=True, store=True, 
         ondelete="restrict", 
 		domain=[ "&",('state','=',"final") , ('surveyor_id.surveyor','=',"intertek") ], 
-        readonly=True, states={'draft': [('readonly', False)]}  
+        states=READONLY_STATES
         )
 	location_id = fields.Many2one(
             'stock.location', string='Barge',
@@ -39,7 +41,7 @@ class Shipping(models.Model):
 
 	clearence_out_date = fields.Datetime('Clearence Date', help='',  default=time.strftime("%Y-%m-%d %H:%M:%S") )
 
-	quantity = fields.Float( string="Quantity (WMT)",related="coa_id.quantity",  readonly=True , default=0, digits=dp.get_precision('Shipping'), )
+	quantity = fields.Float( string="Quantity (WMT)", readonly=True , default=2, digits=dp.get_precision('Shipping'), )
 	# ritase_count = fields.Float( string="Ritase Count", readonly=True, states={'draft': [('readonly', False)] }  , required=True, default=0, digits=dp.get_precision('Shipping') )
 	# ton_p_rit = fields.Float( string="Ton/Rit", readonly=True, default=0, digits=dp.get_precision('Shipping'), compute="_set_ton_p_rit" )
 	# progress = fields.Float( string="Progress", readonly=True, default=0, compute="_set_progress" )
@@ -59,11 +61,11 @@ class Shipping(models.Model):
 		('done', 'Done')
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
         
-	# @api.depends("quantity", "ritase_count" )
-	# def _set_ton_p_rit(self):
-	# 	for rec in self:
-	# 		rec.ritase_count = rec.ritase_count if rec.ritase_count else 1.0
-	# 		rec.ton_p_rit = rec.quantity /rec.ritase_count
+	@api.onchange( "coa_id" )
+	def _set_quantity(self):
+		for rec in self:
+			_logger.warning("_set_quantity")
+			rec.quantity = rec.coa_id.quantity
 	   
 	# @api.depends("quantity")
 	# def _set_progress(self):

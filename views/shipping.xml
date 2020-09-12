@@ -7,7 +7,7 @@
         <field name="type">tree</field>
         <field name="priority" eval="8"/>
         <field name="arch" type="xml">
-            <tree string="Shipping List">
+            <tree string="Shipping List" decoration-muted="state=='done'" >
                 <field name="name" />
                 <!-- <field name="location_id" /> -->
                 <field name="depart_date" />

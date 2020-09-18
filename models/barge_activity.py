@@ -21,13 +21,13 @@ class BargeActivity(models.Model):
 	quantity = fields.Float( string="Quantity (WMT)", digits=dp.get_precision('QAQC') ,readonly=True, default=0, compute="_set_progress" )
 	capacity = fields.Float( string="Capacity (WMT)", digits=dp.get_precision('Shipping'), readonly=True, default=0, compute="_set_progress" )
 
-	depart_date = fields.Datetime('Depart Date', help='', states=READONLY_STATES )
-	arrive_date = fields.Datetime('Arrived Date', help='', states=READONLY_STATES )
+	depart_date = fields.Datetime('Cast Off Date', help='', states=READONLY_STATES )
+	arrive_date = fields.Datetime('Alongside Date', help='', states=READONLY_STATES )
 
 	start_barging_date = fields.Datetime('Start Barging Date', help='', states=READONLY_STATES )
 	end_barging_date = fields.Datetime('End Barging Date', help='', states=READONLY_STATES )
 
-	clearence_out_date = fields.Datetime('Clearence Date', help='', states=READONLY_STATES )
+	# clearence_out_date = fields.Datetime('Clearence Date', help='', states=READONLY_STATES )
 	
 	progress = fields.Float( string="Progress", readonly=True, default=0, compute="_set_progress" )
 

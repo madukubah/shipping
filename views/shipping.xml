@@ -9,11 +9,9 @@
         <field name="arch" type="xml">
             <tree string="Shipping List" decoration-muted="state=='done'" >
                 <field name="name" />
-                <!-- <field name="location_id" /> -->
+                <field name="quantity" />
                 <field name="depart_date" />
                 <field name="discharging_port" />
-                <!-- <field name="quantity" /> -->
-                <!-- <field name="progress" widget="progressbar" /> -->
                 <field name="state" />
             </tree>
         </field>
@@ -40,12 +38,10 @@
                         </div>
                         <group>
                             <field name="coa_id" />
-                            <field name="location_id" />
+                            <field name="barge_activity_id" />
+                            <field name="location_id" invisible="1" />
                             <field name="sale_contract_id" />
                             <field name="quantity" />
-                            <!-- <field name="ritase_count" /> -->
-                            <!-- <field name="ton_p_rit" /> -->
-                            <!-- <field name="progress" widget="progressbar" /> -->
                         </group>
                         
                         <group class="oe_title">
@@ -71,16 +67,6 @@
                             </group>
                         </group>
 
-                        <!-- <notebook>
-                            <page string="Barging Lines"  >
-                                <field name="barging_lines" >
-                                    <tree string="Shippings" editable="bottom">
-                                        <field name="barging_date" />
-                                        <field name="quantity" />
-									</tree>
-                                </field >
-                            </page>
-                        </notebook> -->
                     </sheet>
                 </form>
             </field>

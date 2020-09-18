@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="shipping_barge_activity_list" model="ir.ui.view">
+        <field name="name">shipping_barge_activity_list</field>
+        <field name="model">shipping.barge.activity</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <tree string="Shipping List" decoration-muted="state=='close'" >
+                <field name="name" />
+                <field name="progress" widget="progressbar" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shipping_barge_activity_form" model="ir.ui.view">
+            <field name="name">shipping.barge.activity.form</field>
+            <field name="model">shipping.barge.activity</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Shipping">
+                    <header>
+                        <button name="button_close" string="close" type="object" states="open" class="btn-primary"  />
+                        <button name="button_open" string="Open" type="object" states="close" class="btn-primary"  />
+                        <field name="state" widget="statusbar" statusbar_visible="open,close"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Name" ></label>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="barge_id" />
+                            <field name="product_id" />
+                            <field name="quantity" />
+                            <field name="capacity" />
+                        </group>
+                        
+                        <group class="oe_title">
+                            <label for="depart_date" string="Date" ></label>
+                            <group>
+                                <field name="depart_date" />
+                                <field name="start_barging_date" />
+                                <field name="clearence_out_date" />
+                            </group>
+                            <group>
+                                <field name="arrive_date" />
+                                <field name="end_barging_date" />
+                            </group>
+                        </group>
+                        <group>
+                            <field name="progress" widget="progressbar" />
+                        </group>
+                        
+                    </sheet>
+                </form>
+            </field>
+    </record>
+</odoo>

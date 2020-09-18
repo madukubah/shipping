@@ -16,6 +16,13 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record model="ir.actions.act_window" id="action_barge_activity">
+        <field name="name">Barging activity</field>
+        <field name="res_model">shipping.barge.activity</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <record model="ir.actions.act_window" id="action_port">
         <field name="name">Port</field>
         <field name="res_model">shipping.port</field>
@@ -32,12 +39,14 @@
                 sequence= "1"
                 />
 
-        <!-- <menuitem name="Barge"
-                id="shipping_barge"
+        <menuitem name="Barging"
+                id="shipping_barging"
                 parent="shipping_top" 
-                action="action_barge"
+                action="action_barge_activity"
                 sequence= "2"
-                /> -->
+                />
+
+        
         
         <menuitem id="shipping_configuration" name="Configuration" sequence="99" 
                 parent="shipping_top"/>
@@ -46,6 +55,13 @@
                 id="shipping_port"
                 parent="shipping_configuration" 
                 action="action_port"
+                sequence= "2"
+                />
+
+            <menuitem name="Barge"
+                id="shipping_barge"
+                parent="shipping_configuration" 
+                action="action_barge"
                 sequence= "2"
                 />
 </odoo>

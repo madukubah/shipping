@@ -10,7 +10,7 @@ class BargeActivity(models.Model):
 	_name = "shipping.barge.activity"
 
 	READONLY_STATES = {
-        'close': [('readonly', True)],
+        'done': [('readonly', True)],
         'open': [('readonly', False)],
     }
 
@@ -33,7 +33,7 @@ class BargeActivity(models.Model):
 
 	state = fields.Selection([
         ('open', 'Open'), 
-		('close', 'Closed'),
+		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='open')
 
 	@api.depends("barge_id", "product_id")
@@ -53,13 +53,21 @@ class BargeActivity(models.Model):
 			self.name = name
 
 	@api.multi
-	def button_close(self):
+	def button_done(self):
 		if not self.env.user.has_group('shipping.shipping_group_manager') :
 			raise UserError(_("You are not manager") )
-		self.state = 'close'
+		self.state = 'done'
 
 	@api.multi
 	def button_open(self):
 		if not self.env.user.has_group('shipping.shipping_group_manager') :
 			raise UserError(_("You are not manager") )
 		self.state = 'open'
+
+	@api.multi
+	def unlink(self):
+		for rec in self:
+			if rec.state != "open" :
+				raise UserError(_("Only Delete data in Open State") )
+		
+		return super(BargeActivity, self ).unlink()

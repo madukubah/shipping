@@ -7,7 +7,7 @@
         <field name="type">tree</field>
         <field name="priority" eval="8"/>
         <field name="arch" type="xml">
-            <tree string="Shipping List" decoration-muted="state=='close'" >
+            <tree string="Shipping List" decoration-muted="state=='done'" >
                 <field name="name" />
                 <field name="progress" widget="progressbar" />
                 <field name="state" />
@@ -22,9 +22,9 @@
             <field name="arch" type="xml">
                 <form string="Shipping">
                     <header>
-                        <button name="button_close" string="close" type="object" states="open" class="btn-primary"  />
-                        <button name="button_open" string="Open" type="object" states="close" class="btn-primary"  />
-                        <field name="state" widget="statusbar" statusbar_visible="open,close"/>
+                        <button name="button_done" string="done" type="object" states="open" class="btn-primary"  />
+                        <button name="button_open" string="Open" type="object" states="done" class="btn-primary"  />
+                        <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">

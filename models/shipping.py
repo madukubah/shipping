@@ -28,7 +28,7 @@ class Shipping(models.Model):
 	barge_activity_id = fields.Many2one(
             'shipping.barge.activity', string='Barging',
 			domain=[ ('state','=',"open")  ],
-            ondelete="restrict", required=True )
+            ondelete="restrict", required=True, states=READONLY_STATES )
 
 	location_id = fields.Many2one(
             'stock.location', string='Location',
@@ -48,8 +48,8 @@ class Shipping(models.Model):
 
 	quantity = fields.Float( string="Quantity (WMT)", readonly=True , default=2, digits=dp.get_precision('Shipping'), compute="_set_quantity" )
 
-	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
-	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", readonly=True, states={'draft': [('readonly', False)], 'approve': [('readonly', False)] }  )
+	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", states=READONLY_STATES  )
+	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", states=READONLY_STATES  )
 
 
 	state = fields.Selection([
@@ -118,4 +118,11 @@ class Shipping(models.Model):
         (_check_port, 'Loading Port and Discharging Port Must Different', ['loading_port','discharging_port'] ) ,
         (_check_barge, 'COA Barge Does Not Match With Barging Barge', ['coa_id','barge_activity_id'] ) 
         ]
+
+	@api.multi
+	def unlink(self):
+		for rec in self:
+			if rec.state != "draft" :
+				raise UserError(_("Only Delete data in Draft State") )
 		
+		return super(Shipping, self ).unlink()

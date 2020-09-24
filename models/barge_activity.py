@@ -8,6 +8,8 @@ _logger = logging.getLogger(__name__)
 
 class BargeActivity(models.Model):
 	_name = "shipping.barge.activity"
+	_order = "id desc"
+
 
 	READONLY_STATES = {
         'done': [('readonly', True)],
@@ -36,6 +38,10 @@ class BargeActivity(models.Model):
 		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='open')
 
+	active = fields.Boolean(
+        'Active', default=True,
+        help="If unchecked, it will allow you to hide the rule without removing it.")
+
 	@api.depends("barge_id", "product_id")
 	def _set_progress(self):
 		for rec in self:
@@ -57,6 +63,7 @@ class BargeActivity(models.Model):
 		if not self.env.user.has_group('shipping.shipping_group_manager') :
 			raise UserError(_("You are not manager") )
 		self.state = 'done'
+		self.active = False
 
 	@api.multi
 	def button_open(self):

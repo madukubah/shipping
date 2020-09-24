@@ -50,6 +50,7 @@ class Shipping(models.Model):
 
 	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", states=READONLY_STATES  )
 	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", states=READONLY_STATES  )
+	user_id = fields.Many2one('res.users', string='User', index=True, track_visibility='onchange', default=lambda self: self.env.user)
 
 
 	state = fields.Selection([

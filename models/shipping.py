@@ -13,7 +13,8 @@ class Shipping(models.Model):
 
 	READONLY_STATES = {
         'draft': [('readonly', False)],
-        'approve': [('readonly', True)],
+        'cancel': [('readonly', False)],
+        'confirm': [('readonly', True)],
         'done': [('readonly', True)],
     }
 
@@ -22,12 +23,12 @@ class Shipping(models.Model):
         string="QAQC COA", 
         required=True, store=True, 
         ondelete="restrict", 
-		domain=[ "&",('state','=',"final") , ('surveyor_id.surveyor','=',"intertek") ], 
+		domain=[ "&",('state','=',"confirm") , ('surveyor_id.surveyor','=',"intertek") ], 
         states=READONLY_STATES
         )
 	barge_activity_id = fields.Many2one(
             'shipping.barge.activity', string='Barging',
-			domain=[ ('state','=',"open")  ],
+			domain=[ ('state','=',"confirm")  ],
             ondelete="restrict", required=True, states=READONLY_STATES )
 
 	location_id = fields.Many2one(
@@ -43,70 +44,76 @@ class Shipping(models.Model):
 
 	start_barging_date = fields.Datetime('Start Barging Date', help='', related="barge_activity_id.start_barging_date" )
 	end_barging_date = fields.Datetime('End Barging Date', help='', related="barge_activity_id.end_barging_date" )
-
 	# clearence_out_date = fields.Datetime('Clearence Date', help='', related="barge_activity_id.clearence_out_date" )
-
 	quantity = fields.Float( string="Quantity (WMT)", readonly=True , default=2, digits=dp.get_precision('Shipping'), compute="_set_quantity" )
 
 	loading_port = fields.Many2one("shipping.port", string="Loading Port", required=True, ondelete="restrict", states=READONLY_STATES  )
 	discharging_port = fields.Many2one("shipping.port", string="Discharging Port", required=True, ondelete="restrict", states=READONLY_STATES  )
 	user_id = fields.Many2one('res.users', string='User', index=True, track_visibility='onchange', default=lambda self: self.env.user)
-
-
 	state = fields.Selection([
         ('draft', 'Draft'), 
-		('approve', 'Approved'),
-		('done', 'Done')
+		('cancel', 'Cancelled'),
+		('confirm', 'Approve'),
+		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
         
 	@api.depends( "coa_id" )
 	def _set_quantity(self):
-		for rec in self:
-			_logger.warning("_set_quantity")
-			rec.quantity = rec.coa_id.quantity
+		for record in self:
+			record.quantity = record.coa_id.quantity
 	   
 	@api.onchange("location_id", "sale_contract_id" )
 	def _set_name(self):
-		for rec in self:
+		for record in self:
 			barge_name = ""
 			contract_name = ""
-			if( rec.location_id ) :
-				barge_name = rec.location_id.name
-			if( rec.sale_contract_id ) :
-				contract_name = rec.sale_contract_id.name
-			rec.name = barge_name + " " + contract_name
+			if( record.location_id ) :
+				barge_name = record.location_id.name
+			if( record.sale_contract_id ) :
+				contract_name = record.sale_contract_id.name
+			record.name = barge_name + " " + contract_name
 	
 	@api.multi
 	def _check_port(self):
-		for rec in self:
-			if( rec.loading_port.id == rec.discharging_port.id ) :
+		for record in self:
+			if( record.loading_port.id == record.discharging_port.id ) :
 				return False	
 		return True
 
 	@api.multi
 	def _check_barge(self):
-		for rec in self:
-			if( rec.coa_id.barge_id.id != rec.barge_activity_id.barge_id.id ) :
+		for record in self:
+			if( record.coa_id.barge_id.id != record.barge_activity_id.barge_id.id ) :
 				return False	
 		return True
 
 	@api.multi
-	def button_cancel(self):
-		if not self.env.user.has_group('shipping.shipping_group_manager') :
-			raise UserError(_("You are not manager") )
-		self.state = 'draft'
+	def action_draft(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'draft'
 
 	@api.multi
-	def button_approve(self):
-		if not self.env.user.has_group('shipping.shipping_group_manager') :
-			raise UserError(_("You are not manager") )
-		self.state = 'approve'
+	def action_cancel(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'cancel'
 
 	@api.multi
-	def button_done(self):
-		if not self.env.user.has_group('shipping.shipping_group_manager') :
-			raise UserError(_("You are not manager") )
-		self.state = 'done'
+	def action_confirm(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'confirm'
+
+	@api.multi
+	def action_done(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'done'
 	
 	@api.model
 	def create(self, values):
@@ -122,8 +129,8 @@ class Shipping(models.Model):
 
 	@api.multi
 	def unlink(self):
-		for rec in self:
-			if rec.state != "draft" :
+		for record in self:
+			if record.state != "draft" :
 				raise UserError(_("Only Delete data in Draft State") )
 		
 		return super(Shipping, self ).unlink()

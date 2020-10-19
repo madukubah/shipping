@@ -12,14 +12,16 @@ class BargeActivity(models.Model):
 
 
 	READONLY_STATES = {
+        'draft': [('readonly', False)],
+        'cancel': [('readonly', True)],
+        'confirm': [('readonly', True)],
         'done': [('readonly', True)],
-        'open': [('readonly', False)],
     }
 
 	name = fields.Char(compute='_compute_name', store=True, readonly=True, default="New" )
 	
 	barge_id = fields.Many2one('shipping.barge', string='Barge', domain=[ ('active','=',True)], required=True, states=READONLY_STATES, change_default=True, index=True, track_visibility='always')
-	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
+	product_id = fields.Many2one('product.product', 'Material', domain=[('type', 'in', ['product', 'consu'])], required=True, states=READONLY_STATES )
 	quantity = fields.Float( string="Quantity (WMT)", digits=dp.get_precision('QAQC') ,readonly=True, default=0, compute="_set_progress" )
 	capacity = fields.Float( string="Capacity (WMT)", digits=dp.get_precision('Shipping'), readonly=True, default=0, compute="_set_progress" )
 
@@ -34,9 +36,11 @@ class BargeActivity(models.Model):
 	progress = fields.Float( string="Progress", readonly=True, default=0, compute="_set_progress" )
 
 	state = fields.Selection([
-        ('open', 'Open'), 
+        ('draft', 'Draft'), 
+		('cancel', 'Cancelled'),
+		('confirm', 'Approve'),
 		('done', 'Done'),
-        ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='open')
+        ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
 	active = fields.Boolean(
         'Active', default=True,
@@ -44,12 +48,12 @@ class BargeActivity(models.Model):
 
 	@api.depends("barge_id", "product_id")
 	def _set_progress(self):
-		for rec in self:
-			if( rec.barge_id and rec.product_id ):
-				product_qty = rec.product_id.with_context({'location' : rec.barge_id.location_id.id})
-				rec.progress = product_qty.qty_available / rec.barge_id.capacity * 100
-				rec.capacity = rec.barge_id.capacity
-				rec.quantity = product_qty.qty_available
+		for record in self:
+			if( record.barge_id and record.product_id ):
+				product_qty = record.product_id.with_context({'location' : record.barge_id.location_id.id})
+				record.progress = product_qty.qty_available / record.barge_id.capacity * 100
+				record.capacity = record.barge_id.capacity
+				record.quantity = product_qty.qty_available
 
 
 	@api.depends('barge_id' )
@@ -57,24 +61,40 @@ class BargeActivity(models.Model):
 		for record in self:
 			name = record.barge_id.name
 			self.name = name
+	
+	@api.multi
+	def action_draft(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'draft'
 
 	@api.multi
-	def button_done(self):
-		if not self.env.user.has_group('shipping.shipping_group_manager') :
-			raise UserError(_("You are not manager") )
-		self.state = 'done'
-		self.active = False
+	def action_cancel(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'cancel'
 
 	@api.multi
-	def button_open(self):
-		if not self.env.user.has_group('shipping.shipping_group_manager') :
-			raise UserError(_("You are not manager") )
-		self.state = 'open'
+	def action_confirm(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'confirm'
+
+	@api.multi
+	def action_done(self):
+		for record in self:
+			if not self.env.user.has_group('shipping.shipping_group_manager') :
+				raise UserError(_("You are not manager") )
+			record.state = 'done'
+			record.active = False
 
 	@api.multi
 	def unlink(self):
-		for rec in self:
-			if rec.state != "open" :
+		for record in self:
+			if record.state != "draft" :
 				raise UserError(_("Only Delete data in Open State") )
 		
 		return super(BargeActivity, self ).unlink()

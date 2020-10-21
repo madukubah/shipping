@@ -9,7 +9,6 @@
         'sale_contract',
         "mining_qaqc",
         "stock",
-        "procurement",
         "barge"
     ],
     'data': [

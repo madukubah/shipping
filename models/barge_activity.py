@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class BargeActivity(models.Model):
 	_name = "shipping.barge.activity"
+	_inherit = ['mail.thread', 'ir.needaction_mixin']
 	_order = "id desc"
 
 

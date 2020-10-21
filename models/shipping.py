@@ -9,16 +9,17 @@ _logger = logging.getLogger(__name__)
 
 class Shipping(models.Model):
 	_name = "shipping.order"
+	_inherit = ['mail.thread', 'ir.needaction_mixin']
 	_order = "id desc"
 
 	READONLY_STATES = {
         'draft': [('readonly', False)],
-        'cancel': [('readonly', False)],
+        'cancel': [('readonly', True)],
         'confirm': [('readonly', True)],
         'done': [('readonly', True)],
     }
 
-	name = fields.Char(string="Name", size=100 , store=True,index=True,copy=False, required=True, states=READONLY_STATES )
+	name = fields.Char(string="Name", size=100 , store=True,index=True, required=True, states=READONLY_STATES )
 	coa_id = fields.Many2one("qaqc.coa.order", 
         string="QAQC COA", 
         required=True, store=True, 

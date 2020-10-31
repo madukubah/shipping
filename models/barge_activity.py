@@ -35,6 +35,7 @@ class BargeActivity(models.Model):
 	# clearence_out_date = fields.Datetime('Clearence Date', help='', states=READONLY_STATES )
 	
 	progress = fields.Float( string="Progress", readonly=True, default=0, compute="_set_progress" )
+	remarks = fields.Char( string="Remarks" )
 
 	state = fields.Selection([
         ('draft', 'Draft'), 

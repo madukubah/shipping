@@ -45,9 +45,10 @@
                 action="action_barge_activity"
                 sequence= "2"
                 />
+        
+        <menuitem id="shipping_report" name="Report" sequence="98" 
+                parent="shipping_top"/>
 
-        
-        
         <menuitem id="shipping_configuration" name="Configuration" sequence="99" 
                 parent="shipping_top"/>
 

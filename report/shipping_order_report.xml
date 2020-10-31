@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="action_shipping_order_report_wise"
+                string="Shipping Report"
+                model="shipping.order.report"
+                report_type="qweb-pdf"
+                file="shipping.shipping_order_temp"
+                name="shipping.shipping_order_temp"
+        />
+    </data>
+</odoo>

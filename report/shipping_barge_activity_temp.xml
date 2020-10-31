@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="shipping_barge_activity_temp">
+        <t t-call="report.external_layout">
+            <div class="page">
+                <div class="oe_structure" >
+                        <div class="row">
+                            <center>
+                                <b>
+                                    <h4>Barging Report</h4>
+                                </b>
+                            </center>
+                            <center>
+                                <b>
+                                    <span t-esc="start_date"/>
+                                    To
+                                    <span t-esc="end_date"/>
+                                </b>
+                            </center>
+                        </div>
+                        <br/>
+                        <t t-foreach="data.keys()" t-as="location">
+                            <div class="row">
+                                <center>
+                                    <b>
+                                        <h4><span t-esc="location"/></h4>
+                                    </b>
+                                </center>
+                            </div>
+
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <!-- <th>Name</th> -->
+                                        <th class="text-center">Alongside Date</th>
+                                        <th class="text-center">Start Barging</th>
+                                        <th class="text-center">End Barging</th>
+                                        <th class="text-center">Cast Off Date</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Progress</th>
+                                        <th class="text-center">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="data[location]" t-as="line">
+                                        <!-- <td>
+                                            <span t-esc="line['doc_name']"/>
+                                        </td> -->
+                                        <td class="text-center">
+                                            <span t-esc="line['arrive_date']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['start_barging_date']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['end_barging_date']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['depart_date']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{:,}'.format(line['quantity'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['progress']"/>
+                                            %
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['remarks']"/>
+                                        </td>
+                                    </tr>            
+                                </tbody>
+                            </table>
+                        </t>
+                    
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

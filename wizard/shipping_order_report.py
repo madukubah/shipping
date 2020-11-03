@@ -20,7 +20,7 @@ class ShippingOrderReport(models.TransientModel):
         month_shipping_dict = {}
         for shipping in shippings:
             row = {}
-            row["doc_name"] = shipping.location_id.name + shipping.sale_contract_id.name
+            row["doc_name"] = shipping.location_id.name + " " + shipping.sale_contract_id.name
             row["arrive_date"] = shipping.arrive_date
             row["depart_date"] = shipping.depart_date
             row["quantity"] = shipping.quantity

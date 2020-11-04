@@ -36,7 +36,7 @@
                                         <th class="text-center">Cast Off Date</th>
                                         <th class="text-center">Loading Port</th>
                                         <th class="text-center">Discharging Port</th>
-                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Qty (WMT)</th>
                                     </tr>
                                 </thead>
                                 <tbody>

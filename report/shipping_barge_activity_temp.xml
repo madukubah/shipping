@@ -36,7 +36,7 @@
                                         <th class="text-center">Start Barging</th>
                                         <th class="text-center">End Barging</th>
                                         <th class="text-center">Cast Off Date</th>
-                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Qty (WMT)</th>
                                         <th class="text-center">Progress</th>
                                         <th class="text-center">Remarks</th>
                                     </tr>

@@ -21,3 +21,6 @@ shipping_shipping_acces_right_all,shipping_shipping_acces_right_all,model_shippi
 shipping_barge_acces_right_all,shipping_barge_acces_right_all,barge.model_shipping_barge,,1,0,0,0
 shipping_port_acces_right_all,shipping_port_acces_right_all,model_shipping_port,,1,0,0,0
 shipping_barge_activity_acces_right_all,shipping_barge_activity_acces_right_all,model_shipping_barge_activity,,1,0,0,0
+,,,,,,,
+shipping_element_spec_acces_right_manager,shipping_element_spec_acces_right_manager,mining_qaqc.model_qaqc_element_spec,shipping_group_manager,1,0,0,0
+shipping_qaqc_coa_acces_right_manager,shipping_qaqc_coa_acces_right_manager,mining_qaqc.model_qaqc_coa_order,shipping_group_manager,1,0,0,0

@@ -24,7 +24,8 @@ class Shipping(models.Model):
         string="QAQC COA", 
         required=True, store=True, 
         ondelete="restrict", 
-		domain=[ "&",('state','=',"confirm") , ('surveyor_id.surveyor','=',"intertek") ], 
+		domain=[ ('surveyor_id.surveyor','=',"main") ], 
+		# domain=[ "&",('state','=',"confirm") , ('surveyor_id.surveyor','=',"intertek") ], 
         states=READONLY_STATES
         )
 	barge_activity_id = fields.Many2one(

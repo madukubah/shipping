@@ -30,13 +30,15 @@
         <field name="view_mode">tree,form</field>
     </record>
     
-    <menuitem id="shipping_top" name="Shipping" sequence="4" web_icon="shipping,static/description/icon.png" />
+    <menuitem id="shipping_top" name="Shipping" sequence="4" web_icon="shipping,static/description/icon.png" groups="shipping_group_manager" />
         
         <menuitem name="Shipping"
                 id="shipping_shipping"
                 parent="shipping_top" 
                 action="action_shipping"
                 sequence= "1"
+                groups="shipping_group_manager"
+
                 />
 
         <menuitem name="Barging"

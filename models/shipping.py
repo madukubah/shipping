@@ -24,7 +24,7 @@ class Shipping(models.Model):
         string="QAQC COA", 
         required=True, store=True, 
         ondelete="restrict", 
-		domain=[ ('surveyor_id.surveyor','=',"main") ], 
+		domain=[ ('surveyor_id.surveyor','=',"main"), ('state','!=',"done") ], 
 		# domain=[ "&",('state','=',"confirm") , ('surveyor_id.surveyor','=',"intertek") ], 
         states=READONLY_STATES
         )

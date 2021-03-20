@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class Shipping(models.Model):
 	_name = "shipping.order"
 	_inherit = ['mail.thread', 'ir.needaction_mixin']
-	_order = "id desc"
+	_order = "depart_date desc"
 
 	READONLY_STATES = {
         'draft': [('readonly', False)],

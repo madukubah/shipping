@@ -19,14 +19,35 @@ class Shipping(models.Model):
         'done': [('readonly', True)],
     }
 
+	@api.multi
+	def _check_port(self):
+		for record in self:
+			if( record.loading_port.id == record.discharging_port.id ) :
+				return False	
+		return True
+
+	@api.multi
+	def _check_barge(self):
+		for record in self:
+			if( record.coa_id.barge_id.id != record.barge_activity_id.barge_id.id ) :
+				return False	
+		return True
+	
+	@api.multi
+	def _check_coa(self):
+		for record in self:
+			if( record.coa_id.id not in record.coa_history_ids.ids ) :
+				return False
+		return True
+
 	name = fields.Char(string="Name", size=100 , store=True,index=True, required=True, states=READONLY_STATES )
 	coa_id = fields.Many2one("qaqc.coa.order", 
         string="QAQC COA", 
         required=True, store=True, 
         ondelete="restrict", 
-		domain=[ ('surveyor_id.surveyor','=',"main"), ('state','!=',"done") ], 
+		# domain=[ ('surveyor_id.surveyor','=',"main"), ('state','!=',"done") ], 
 		# domain=[ "&",('state','=',"confirm") , ('surveyor_id.surveyor','=',"intertek") ], 
-        states=READONLY_STATES
+        # states=READONLY_STATES
         )
 	barge_activity_id = fields.Many2one(
             'shipping.barge.activity', string='Barging',
@@ -58,6 +79,9 @@ class Shipping(models.Model):
 		('confirm', 'Approve'),
 		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+
+	coa_history_ids = fields.Many2many('qaqc.coa.order', 'shipping_coa_rel', 'shipping_id', 'coa_id', string='COA Histories', copy=False)
+	
         
 	@api.depends( "coa_id" )
 	def _set_quantity(self):
@@ -74,20 +98,6 @@ class Shipping(models.Model):
 			if( record.sale_contract_id ) :
 				contract_name = record.sale_contract_id.name
 			record.name = barge_name + " " + contract_name
-	
-	@api.multi
-	def _check_port(self):
-		for record in self:
-			if( record.loading_port.id == record.discharging_port.id ) :
-				return False	
-		return True
-
-	@api.multi
-	def _check_barge(self):
-		for record in self:
-			if( record.coa_id.barge_id.id != record.barge_activity_id.barge_id.id ) :
-				return False	
-		return True
 
 	@api.multi
 	def action_draft(self):
@@ -126,7 +136,8 @@ class Shipping(models.Model):
 
 	_constraints = [ 
         (_check_port, 'Loading Port and Discharging Port Must Different', ['loading_port','discharging_port'] ) ,
-        (_check_barge, 'COA Barge Does Not Match With Barging Barge', ['coa_id','barge_activity_id'] ) 
+        (_check_barge, 'COA Barge Does Not Match With Barging Barge', ['coa_id','barge_activity_id'] ) ,
+        (_check_coa, 'COA does not register in COA histories', ['coa_id','coa_history_ids'] ) 
         ]
 
 	@api.multi

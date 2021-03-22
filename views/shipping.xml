@@ -70,6 +70,16 @@
                             </group>
                         </group>
 
+                        <group>
+                            <field name="coa_history_ids">
+                                <tree string="COA Histories">
+                                    <field name="name" />
+                                    <field name="quantity" />
+                                    <field name="state" />
+                                </tree>
+                            </field >
+                        </group>
+
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>

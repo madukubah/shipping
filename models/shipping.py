@@ -62,11 +62,11 @@ class Shipping(models.Model):
 
 	sale_contract_id = fields.Many2one('sale.contract', string='Contract', domain=[ '&', ('state','=',"open"), ('is_expired','=',"False") ], states=READONLY_STATES, required=True, change_default=True, index=True, track_visibility='always', ondelete="restrict" )
 
-	depart_date = fields.Datetime('Cast Off Date', help='', related="barge_activity_id.depart_date" )
-	arrive_date = fields.Datetime('Alongside Date', help='', related="barge_activity_id.arrive_date" )
+	depart_date = fields.Datetime('Cast Off Date', help='', related="barge_activity_id.depart_date", store=True )
+	arrive_date = fields.Datetime('Alongside Date', help='', related="barge_activity_id.arrive_date", store=True )
 
-	start_barging_date = fields.Datetime('Start Barging Date', help='', related="barge_activity_id.start_barging_date" )
-	end_barging_date = fields.Datetime('End Barging Date', help='', related="barge_activity_id.end_barging_date" )
+	start_barging_date = fields.Datetime('Start Barging Date', help='', related="barge_activity_id.start_barging_date", store=True )
+	end_barging_date = fields.Datetime('End Barging Date', help='', related="barge_activity_id.end_barging_date", store=True )
 	# clearence_out_date = fields.Datetime('Clearence Date', help='', related="barge_activity_id.clearence_out_date" )
 	quantity = fields.Float( string="Quantity (WMT)", readonly=True , default=2, digits=dp.get_precision('Shipping'), compute="_set_quantity" )
 

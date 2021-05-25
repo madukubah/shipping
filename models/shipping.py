@@ -140,10 +140,9 @@ class Shipping(models.Model):
         (_check_coa, 'COA does not register in COA histories', ['coa_id','coa_history_ids'] ) 
         ]
 
-	@api.multi
-	def unlink(self):
-		for record in self:
-			if record.state != "draft" :
-				raise UserError(_("Only Delete data in Draft State") )
-		
-		return super(Shipping, self ).unlink()
+	# @api.multi
+	# def unlink(self):
+	# 	for record in self:
+	# 		if record.state != "draft" :
+	# 			raise UserError(_("Only Delete data in Draft State") )
+	# 	return super(Shipping, self ).unlink()
